@@ -1,3 +1,8 @@
+# Pre-installation
+Due to the dataset being extermly large, you need to manually download the dataset from: https://www.kaggle.com/datasets/kazanova/sentiment140?resource=download
+
+When the dataset is downloaded, make sure to put it in a folder called "dataset" in the same folder where you put the jupyter notebook file.
+
 # Installation
 
 ## Option 1
