@@ -1,0 +1,186 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{apacite}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+\bibliographystyle{apacite}
+
+\title{Machine learning for sentiment analysis of tweets\\
+{\footnotesize \textsuperscript{}Machnine Learnig(DV2599)}
+}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Jakob Adamsson}
+\IEEEauthorblockA{\textit{dept. of computer science} \\
+\textit{Blekinge Tekniska Högskola}\\
+Karlskrona, Sweden\\
+jaad19@student.bth.se}
+}
+\raggedright
+\maketitle
+
+\section{Introduction}
+In today's digital age, it can be difficult to accurately determine the sentiment of a piece of text, whether it be a social media post, a news article, customer feedback, or a product review. This task is further complicated by the abundance of conflicting information and opinions available. In this paper, the focus is on the application of sentiment analysis to tweets, which are a common platform for expressing opinions and emotions. However, the techniques and models developed in this paper could potentially be applied to other areas as well, such as medical diagnoses or customer feedback analysis. The main focus in this paper and the implementation is on the cleaning of the data. Therefore the question that shall be answered throughout this paper is the following:
+\newline
+\newline
+What is the impact of using machine learning algorithms for sentiment analysis of tweets on the accuracy and reliability of sentiment predictions compared to traditional methods?
+
+
+\section{Method}
+
+\subsection{Datacleaning}
+When the process of cleaning the data began, the data was first analyzed and important information or unusual features were noted.
+Then, irrelevant features were removed, in this case, Location and Keyword were removed as they did not add important information about the dataset. 
+The columns that were left after this were Text and Target, where Text contained the tweet itself and Target was set to either 1 or 0 depending on whether the tweet was positive or not. Then the tweets were tokenized, stemmed and stopwords were removed.
+The steps for fully cleaning the data were:
+\newline
+\begin{itemize}
+    \item Analyze the data to identify and remove any outliers, as well as any useless columns.
+    \item Check for a significant amount of Unicode characters, such as hashtags, square brackets, newlines, weird returns, and digits within words, and replace them with an empty space if necessary.
+    \item Remove stop words, which do not typically carry much weight in natural language processing, using a library designed for this purpose.
+    \item Apply a stemming algorithm to the dataset to replace words that have the same meaning with a more general word. For example, "am," "are," and "is" would be replaced with "be."
+    \item Tokenize the tweets to allow the models to effectively analyze sequences of words and identify patterns.
+    \item Remove words that occur less than 30\% of the time in the dataset.
+\end{itemize}
+
+\subsubsection{Tokenize}
+Tokenization is a process in natural language processing (NLP) where text is divided into smaller parts called tokens. These tokens can be words, punctuation marks, or other parts of a text. In the context of analyzing tweets, tokens might include punctuation marks such as commas and periods, as well as words that consist only of capital letters.
+
+Using tokens in NLP makes it easier to process and analyze text, as it allows the text to be divided into smaller, more manageable pieces. In this particular implementation, tokenization was used in conjunction with the removal of stop words and other odd characters from the tweets, which made it natural to also implement tokenization. Overall, tokenization helps to improve the efficiency and effectiveness of NLP models by allowing them to focus on specific parts of the text.\cite{burchfiel_2022} \cite{albon2018machine}
+\newline
+\subsubsection{Stop words}
+In natural language processing stop words are words that are pretty frequent in sentences, however does not carry a lot of meaning to the overall picture.
+With this in mind, the Conclusion to remove them from the dataset was pretty obvious and was done by using a Python library called nlkt\cite{nltk} which provides tools for working with human language data(text).\cite{albon2018machine}
+\newline
+\newline
+To eliminate stop words from the tweets, a function was created that checks each word in the tweets against a list of English stop words. If a word in the tweet matches a stop word, it is replaced with a blank space. This function was designed to remove all stop words from the tweets, regardless of the language they were written in. By replacing stop words with blank spaces, the tweets are cleaned and ready to be processed by machine learning algorithms.\cite{nltk}
+\subsubsection{Stemming}
+After the tweets were tokenized, the process of stemming was applied. Stemming involves reducing words to their base or root form, for example, converting the words "tradition" and "traditional" to the common root "tradit." This helps the computer recognize patterns more easily by reducing the number of unique words it encounters. Stemming is useful because it allows the computer to more easily identify the core meaning of a word, even if it appears in different forms. \cite{albon2018machine}
+\newline
+\newline
+Since tweets are being analyzed in this implementation, the assumption is that most people expressing themselves online write similarly, so this method was considered appropriate to apply to the data.
+\subsection{Support Vector Machine}
+Support vector machines are a type of supervised machine learning algorithm that can be used for both classification and regression problems. In this case, the algorithm was used for classification, where the goal was to classify tweets as either positive or not. \cite{albon2018machine} 
+\newline
+\newline
+Support Vector Machines (SVMs) are a type of supervised learning algorithm that can be used for classification or regression tasks. They work by finding a hyperplane in an N-dimensional space (where N is the number of features) that maximally separates different classes in the data.
+
+To find the optimal hyperplane, SVMs seek to maximize the margin between the two closest data points (or classes) of the hyperplane. The data points are treated as p-dimensional vectors and the hyperplane is determined by the points that are closest to it, called support vectors. By maximizing the margin, SVMs aim to find the hyperplane that best separates the classes in the data.\cite{wikipedia_2022_support_vector_machine}
+\newline
+\newline
+The model used for support vector machine comes from a Python module called "Sci kit learn". \cite{scikit_svm}. The loss is set to "hinge". The hinge loss function is good at finding the largest margin between data points, especially usefull when dealing with support vector machines. \cite{hinge} 
+
+\subsection{Gradient Boosting Classifier}
+Gradient Boosting classifier is an ensemble machine learning algorithm that uses weak learners, usually decision trees inorder to grow a strong learner by minimizing the mean squared error as shown (1). A weak lerner is a model or algorithm that is just slightly better than random guessing. \cite{wikipedia_2022_gradient_boosting}\raggedright 
+\newline
+\newline
+Gradient boosting classifier works by training the current weak learner on previous output with the goal to minimize the mean squared error, this is done by using (3). It is a supervised learner. The current weak learner is then added to the ensemble of weak learners and the process is repeated until the desired number of weak learners is reached. 
+
+The model used for gradient boosting classifier comes from a Python module called "Scikit learn". \cite{scikit_gbc} 
+
+\subsection{Logistic Regression}
+Logistic Regression is a machine learning algorithm that is used for classification tasks. It is a binary classifier, meaning it can distinguish between two classes, and is well-suited for the data presented in this paper.
+
+The goal of Logistic Regression is to constrain the function value to be between 0 and 1, as this allows us to calculate a probability. When using this algorithm, if the function returns a value greater than 0.5, the sample belongs to class 1, otherwise it belongs to class 0. This is achieved by using a logistic function (also known as the sigmoid function) to transform the output of a linear regression model into a probability between 0 and 1. \cite{albon2018machine} 
+
+The model used for Logistic Regression comes from a Python module called "Scikit learn" and its fairly straight forward to use. Include the correct module from scikit learn and make a call to create an instance of the class. In the implementation provided, the solver was set to "sag"  where sag stands for stochastic average gradient. The reason for choosing this solver is due to it being good at large data sets. \cite{solvers}
+
+
+\subsection{Naive Bayes}
+Naive Bayes is a machine learning algorithm that is commonly used for classification tasks. It is based on Bayes theorem\eqref{Bayes_theorem}, which is a statistical formula that allows us to estimate the probability of an event based on prior knowledge. In the context of Naive Bayes, the algorithm uses this theorem to classify data points by comparing the posterior probability of each possible class for a given observation.
+
+In this paper, a specific type of Naive Bayes called Multinomial Naive Bayes. This version of the algorithm is well-suited for dealing with discrete data, where the observations are assumed to be drawn from a multinomial distribution. Multinominal Naive Bayes most common usage is when dealing with text classification, like in this paper. Essentially, Multinomial Naive Bayes is similar to the standard Gaussian version of the algorithm, but it is designed to handle discrete data rather than continuous data. \cite{albon2018machine} 
+
+The model used for Mutlinominal Naived Bayes comes from a Python module called "Scikit learn" \cite{scikit} and is simply imported and saved within a variable when creating an instance of the class. 
+
+
+
+\section{Result}
+The question presented in the introduction will be addressed. As a reminder, the question was:
+\newline
+\newline
+What is the impact of using machine learning algorithms for sentiment analysis of tweets on the accuracy and reliability of sentiment predictions compared to traditional methods?
+\newline
+\newline
+Using machine learning algorithms for sentiment analysis of tweets can significantly improve the accuracy and reliability of sentiment predictions compared to traditional methods. As demonstrated by the results of the implementation, models such as Naive Bayes and Logistic Regression perform very well in terms of accuracy, confusion matrix, and F1 score. The impact of using machine learning in this context is significant, and the right model can outperform most humans at tasks like these. The result really shows that investing in these types of implementations can be very profitable for companies, as demonstrated by the results, rather than hiring people to do the work.
+\section{Analysis}
+The models that were developed and trained on the cleaned dataset performed very well overall. Logistic regression, multinomial naive bayes, and support vector machine scored an accuracy above 80\%. However, the gradient boosting classifier did not perform as expected and only had an accuracy of 53\%. The reason for the poor performance of the gradient boosting classifier may be due to the fact that the hyperparameters were not tuned enough, leading to poor performance. Since logistic regression had an accuracy of 93\%, multinomial naive bayes had an accuracy of 94\%, and support vector machine had an accuracy of 84\%, imbalanced data, poor data partitioning, and insufficient data can be ruled out, as all models were trained on the same training set and tested on the same test set.
+\newline
+\newline
+Upon examining the confusion matrices of all the models, it appears that most predictions were classified as true positives (positive comments) and true negatives (negative comments). However, the gradient boosting classifier showed a significant number of false positives, meaning that it classified positive tweets as negative. This suggests that the hyperparameters were not sufficiently adjusted, leading to poor performance of the model. It is not fair to judge the performance of a machine learning model solely based on the confusion matrix, as this matrix only provides a general overview of how the model performed overall. In order to fully understand the strengths and weaknesses of the model, it is necessary to consider a variety of other metrics in addition to the confusion matrix.
+\newline
+\newline
+The gradient boosting classifier did not perform well in terms of F1 score, as indicated by its low score of 0.68. Most other models, with the exception of the gradient boosting classifier and support vector machine, had F1 scores above 86\%, indicating high precision and recall. In an effort to improve the performance of these two models, the hyperparameters were adjusted, but this resulted in longer learning times. Despite achieving relatively high accuracy, the gradient boosting classifier still had a poor F1 score, which is a measure of the balance between precision and recall. Using deep learning could potentially address both the long training time and poor F1 scores, but it was not an option for this assignment.
+\newline
+\newline
+From a company's perspective, implementing a solution using machine learning techniques may require an initial investment, but in the long run, using a machine for tasks like this will likely be more cost-effective compared to using human labor. Additionally, if this technology becomes widely available for use by the public, it could potentially be used to protect vulnerable individuals from scams. For example, these machine learning models could be trained on a variety of datasets to detect and prevent scams targeting elderly individuals. While the current implementation and dataset may not be perfect, the potential for these models to be applied to other similar tasks is high. In summary, using machine learning for tasks like this has the potential to not only be more cost-effective for companies, but also to provide a valuable service for the public by protecting them from scams.
+
+\section{Conclusion}
+The conclusion that can be drawn is that using computers that perform operations in the form of machine learning is much more effective than originally assumed. After cleaning the data and implementing the four algorithms, it can be said with a high degree of confidence that a machine can classify tasks like this much better and much faster than a human can in most cases. Some algorithms are better than others, as seen in the results, but if the right algorithm is chosen, such as logistic regression, tasks like this can be classified with a high degree of confidence. The initial idea was that the main focus would be on research about the algorithms and how to implement them. However, during the code writing, about 40\% of the time was spent building the models and 60\% of the time was spent cleaning the data, learning about tokenization, stemming, and bag of words, just to mention a few of the methods applied to the data. It is reasonable that the cleaning of the data took up most of the time because no algorithm is good at learning from poor data. If a task similar arises in the future, it may be worthwhile to consider using deep learning techniques instead of standard machine learning in order to improve the effectiveness and efficiency of the classification process. Additionally, it may also be beneficial to invest further time and resources into thoroughly cleaning and preparing the data, as the quality of the data has a significant impact on the performance of the model. By using deep learning algorithms and ensuring that the data is as clean and well-structured as possible, it is likely that the classification process will yield more accurate and reliable results
+\section{Contribution}
+Jakob Adamsson is the author and has written this report as well as the implementation of all code by himself.
+\clearpage
+\section{Formulas}
+\begin{equation}
+\label{MSE}
+\frac{1}{n}\sum_{i=1}^{n} (y_i - \hat{y_i})^2
+\end{equation}
+\begin{equation}
+\label{L_MSE}
+\frac{1}{n}\sum_{i=1}^{n} (y_i - F(x_i))^2
+\end{equation}
+\begin{equation}
+\label{L_MSE_D}
+-\frac{\partial{L_{mse}}}{\partial{F(x_i)}} = \frac{2}{n}(y_i - F(x_i))
+\end{equation}
+\begin{equation}
+\label{lr}
+P(y_i = 1|x_i) = \frac{1}{1 + e^{-(\beta_0 + \beta_1x_i)}}
+\end{equation}
+\begin{equation}
+\label{lr}
+P(y_i = 1|x_i)
+\end{equation}
+\begin{equation}
+\label{Bayes_theorem}
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+\end{equation}
+
+Where:
+
+$y_i$ is the target variable
+
+$\hat{y_i}$ is the predicted value
+
+$n$ is the number of observations
+
+$F(x_i)$ is the current weak learner
+
+$x_i$ is the input variable
+
+$L_{mse}$ is the mean squared error
+
+$\beta_0$ is the intercept
+
+$\beta_1$ is the slope
+
+$P(A|B)$ should be interpreted as probability of A happening given B occred
+
+$P(A)$ and $P(B)$ should be interpreted as probability of A and probability of B
+
+
+
+
+\clearpage
+\bibliography{Refs}
+
+
+
+\end{document}
